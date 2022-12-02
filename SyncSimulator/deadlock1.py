@@ -1,45 +1,27 @@
 from Environment import *
 from Environment import _blk
 
-aArrived = MySemaphore(3, "semafoor")
-bArrived = MySemaphore(3, "semafoor")
-cArrived = MySemaphore(3, "semafoor")
+aArrived = MySemaphore(0, "semafoor")
+bArrived = MySemaphore(0, "semafoor")
+cArrived = MySemaphore(0, "semafoor")
 
 def threadA():
     while True:
-        print("At the beginning of thread A")  
-        aArrived.wait()
-        bArrived.wait() 
-        cArrived.wait() 
+        cArrived.wait()
         print("A critical section")
         aArrived.signal() 
-        bArrived.signal() 
-        cArrived.signal() 
-        print("At the end of thread A") 
 
 def threadB():
     while True:
-        print("At the beginning of thread B") 
-        aArrived.wait() 
-        bArrived.wait()
-        cArrived.wait() 
+        aArrived.wait()
         print("B critical section")
-        aArrived.signal() 
-        bArrived.signal() 
-        cArrived.signal() 
-        print("At the end of thread B")
+        bArrived.signal()
 
 def threadC():
-    while True:
-        print("At the beginning of thread C") 
-        aArrived.wait() 
+    while True: 
         bArrived.wait() 
-        cArrived.wait()
         print("C critical section")
-        aArrived.signal() 
-        bArrived.signal() 
         cArrived.signal() 
-        print("At the end of thread C")
 
 def setup():
     subscribe_thread(threadA)
