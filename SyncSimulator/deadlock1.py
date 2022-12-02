@@ -1,18 +1,17 @@
 from Environment import *
 from Environment import _blk
 
-aArrived = MySemaphore(0, "semafoor")
-bArrived = MySemaphore(0, "semafoor")
-cArrived = MySemaphore(0, "semafoor")
+aArrived = MySemaphore(1, "semafoor")
+bArrived = MySemaphore(1, "semafoor")
+cArrived = MySemaphore(1, "semafoor")
 
 def threadA():
     while True:
         print("At the beginning of thread A")  
         bArrived.wait() 
         cArrived.wait() 
-        aArrived.wait()
-        print("A.signal")
-        aArrived.signal() 
+        print("B.signal")
+        bArrived.signal() 
         print("At the end of thread A") 
 
 def threadB():
@@ -20,9 +19,8 @@ def threadB():
         print("At the beginning of thread B") 
         aArrived.wait() 
         cArrived.wait() 
-        bArrived.wait() 
-        print("B.signal")
-        bArrived.signal() 
+        print("C.signal")
+        cArrived.signal() 
         print("At the end of thread B")
 
 def threadC():
@@ -30,9 +28,8 @@ def threadC():
         print("At the beginning of thread C") 
         aArrived.wait() 
         bArrived.wait() 
-        cArrived.wait() 
-        print("C.signal")
-        cArrived.signal()
+        print("A.signal")
+        aArrived.signal()
         print("At the end of thread C")
 
 def setup():
