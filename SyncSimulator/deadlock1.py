@@ -1,7 +1,7 @@
 from Environment import *
 from Environment import _blk
 
-aArrived = MySemaphore(0, "semafoor")
+aArrived = MySemaphore(1, "semafoor")
 bArrived = MySemaphore(0, "semafoor")
 cArrived = MySemaphore(0, "semafoor")
 
@@ -9,19 +9,19 @@ def threadA():
     while True:
         cArrived.wait()
         print("A critical section")
-        aArrived.signal() 
+        bArrived.signal() 
 
 def threadB():
     while True:
         aArrived.wait()
         print("B critical section")
-        bArrived.signal()
+        cArrived.signal()
 
 def threadC():
     while True: 
         bArrived.wait() 
         print("C critical section")
-        cArrived.signal() 
+        aArrived.signal() 
 
 def setup():
     subscribe_thread(threadA)
