@@ -14,7 +14,7 @@ dut_dir = ""
 #myDut = "Dut44_DiningPhilosophers_CondVar"
 #myDut = "Dut42_ReaderWriter_CondVar"
 #myDut = "Dut_Example"
-# myDut = "deadlock1"
+# myDut = "DDeadlock"
 myDut = "CSynchronization"
 
 if __name__ == '__main__':
