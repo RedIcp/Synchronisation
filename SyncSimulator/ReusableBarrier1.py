@@ -31,12 +31,15 @@ def threadReusableBarrier1():
         turnstile2.wait() # second turnstile
         turnstile2.signal()
 
-n = MyInt(3, "number of threads")
+n = 3
+count = 0
 mutex = MyMutex("mutex")
 turnstile1 = MySemaphore(0, "semafoor")
 turnstile2 = MySemaphore(1, "semafoor")
-allArrived = MySemaphore(n, "semafoor")
-count = MyInt(0, "counter")
+# allArrived = MySemaphore(n, "semafoor")
+watchNumberOfThreads = MyInt(n, "Number of threads")
+watchCount = MyInt(count, "Current count")
+
 
 def setup():
     for i in range(n):
