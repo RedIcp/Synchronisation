@@ -1,15 +1,6 @@
 from Environment import *
 from Environment import _blk
 
-n = 3
-
-mutex = MySemaphore(1, "semafoor")
-turnstile1 = MySemaphore(0, "semafoor")
-turnstile2 = MySemaphore(1, "semafoor")
-allArrived = MySemaphore(n, "semafoor")
-
-count = 0
-
 def threadReusableBarrier1():
     global count
 
@@ -40,6 +31,12 @@ def threadReusableBarrier1():
         turnstile2.wait() # second turnstile
         turnstile2.signal()
 
+n = MyInt(3, "number of threads")
+mutex = MyMutex("mutex")
+turnstile1 = MySemaphore(0, "semafoor")
+turnstile2 = MySemaphore(1, "semafoor")
+allArrived = MySemaphore(n, "semafoor")
+count = MyInt(0, "counter")
 
 def setup():
     for i in range(n):
