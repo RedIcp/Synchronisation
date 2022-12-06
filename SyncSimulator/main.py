@@ -14,8 +14,11 @@ dut_dir = ""
 #myDut = "Dut44_DiningPhilosophers_CondVar"
 #myDut = "Dut42_ReaderWriter_CondVar"
 #myDut = "Dut_Example"
-# myDut = "deadlock1"
-myDut = "CSynchronization"
+#myDut = "deadlock1"
+#myDut = "CSynchronization"
+myDut = "ReusableBarrier1"
+#myDut = "ReusableBarrier2"
+#myDut = "FollowersLeadersQueue"
 
 if __name__ == '__main__':
     sys.path.append(dut_dir)
