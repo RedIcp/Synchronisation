@@ -1,7 +1,7 @@
 from Environment import *
 from Environment import _blk
 
-aArrived = MySemaphore(1, "semafoor")
+aArrived = MySemaphore(0, "semafoor")
 bArrived = MySemaphore(0, "semafoor")
 cArrived = MySemaphore(0, "semafoor")
 dArrived = MySemaphore(0, "semafoor")
@@ -9,9 +9,11 @@ dArrived = MySemaphore(0, "semafoor")
 a1Arrived = MySemaphore(0, "semafoor")
 b1Arrived = MySemaphore(0, "semafoor")
 c1Arrived = MySemaphore(0, "semafoor")
+d1Arrived = MySemaphore(1, "semafoor")
 
 def threadA():
     while True:
+        d1Arrived.wait()
         print("1")
         aArrived.signal() 
         dArrived.wait()
