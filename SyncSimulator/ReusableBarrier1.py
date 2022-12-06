@@ -1,14 +1,16 @@
 from Environment import *
 from Environment import _blk
 
+# 4 semaphores, 1 for each thread, no turnstiles, no counters
+
 def threadReusableBarrier1():
     global count
 
     while True:
         mutex.wait() 
-        count += 1
+        count.v += 1
 
-        if count == n: 
+        if count.v == n: 
             turnstile2.wait()  # lock the second 
             turnstile1.signal() # unlock the first
             
@@ -20,9 +22,9 @@ def threadReusableBarrier1():
         print("critical point")# critical point
 
         mutex.wait() 
-        count -= 1
+        count.v -= 1
 
-        if count == 0: 
+        if count.v == 0: 
             turnstile1.wait() # lock the first
             turnstile2.signal()  # unlock the second
             
@@ -32,14 +34,11 @@ def threadReusableBarrier1():
         turnstile2.signal()
 
 n = 3
-count = 0
 mutex = MyMutex("mutex")
 turnstile1 = MySemaphore(0, "semafoor")
 turnstile2 = MySemaphore(1, "semafoor")
 # allArrived = MySemaphore(n, "semafoor")
-watchNumberOfThreads = MyInt(n, "Number of threads")
-watchCount = MyInt(count, "Current count")
-
+count = MyInt(0, "Number of threads")
 
 def setup():
     for i in range(n):
