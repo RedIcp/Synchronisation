@@ -3,24 +3,28 @@ from Environment import _blk
 
 n = 3
 
-mutex = MyMutex("mutex")
+mutex = MySemaphore(1, "semafoor")
 turnstile1 = MySemaphore(0, "semafoor")
-turnstile2 = MySemaphore(0, "semafoor")
+turnstile2 = MySemaphore(1, "semafoor")
 allArrived = MySemaphore(n, "semafoor")
 
+count = 0
+
 def threadReusableBarrier1():
+    global count
+
     while True:
         mutex.wait() 
         count += 1
 
         if count == n: 
             turnstile2.wait()  # lock the second 
-            turnstile.signal() # unlock the first
+            turnstile1.signal() # unlock the first
             
         mutex.signal()
 
-        turnstile.wait() # first turnstile
-        turnstile.signal()
+        turnstile1.wait() # first turnstile
+        turnstile1.signal()
 
         print("critical point")# critical point
 
@@ -28,7 +32,7 @@ def threadReusableBarrier1():
         count -= 1
 
         if count == 0: 
-            turnstile.wait() # lock the first
+            turnstile1.wait() # lock the first
             turnstile2.signal()  # unlock the second
             
         mutex.signal()
