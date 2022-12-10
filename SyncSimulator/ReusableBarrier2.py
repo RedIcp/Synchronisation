@@ -1,45 +1,31 @@
 from Environment import *
 from Environment import _blk
 
-# not using turnstile wait
+NUM_THREADS = 4 # The number of threads is known at compile time
 
-def threadReusableBarrier1():
-    global count
+# Semaphores for the barrier
+mutex = MySemaphore(1, "Mutex")
+barrier = MySemaphore(0, "Barrier")
 
-    while True:
-        mutex.wait() 
-        count.v += 1
+# Shared state for the barrier
+counter = 0 # Counts the number of threads that have reached the barrier
 
-        if count.v == n: 
-            turnstile2.wait()  # lock the second 
-            turnstile1.signal() # unlock the first
-            
-        mutex.signal()
+def barrier_wait():
+    # Protect the shared state using the mutex semaphore
+    mutex.wait()
 
-        turnstile1.wait() # first turnstile
-        turnstile1.signal()
+    # Increment the counter and check if this is the last thread to reach the barrier
+    if counter == NUM_THREADS - 1:
+        # Signal the barrier semaphore to release all threads
+        barrier.signal()
+        # Reset the counter
+        counter = 0
+    else:
+        # Increment the counter
+        counter += 1
 
-        print("critical point")# critical point
+    # Release the mutex semaphore
+    mutex.signal()
 
-        mutex.wait() 
-        count.v -= 1
-
-        if count.v == 0: 
-            turnstile1.wait() # lock the first
-            turnstile2.signal()  # unlock the second
-            
-        mutex.signal()
-
-        turnstile2.wait() # second turnstile
-        turnstile2.signal()
-
-n = 3
-mutex = MyMutex("mutex")
-turnstile1 = MySemaphore(0, "semafoor")
-turnstile2 = MySemaphore(1, "semafoor")
-# allArrived = MySemaphore(n, "semafoor")
-count = MyInt(0, "Number of threads")
-
-def setup():
-    for i in range(n):
-        subscribe_thread(threadReusableBarrier1)
+    # Wait for the barrier semaphore to be signaled
+    barrier.wait()

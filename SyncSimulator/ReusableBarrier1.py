@@ -1,34 +1,132 @@
 from Environment import *
 from Environment import _blk
 
-NUM_THREADS = 4 # The number of threads is known at compile time
+mutex = MySemaphore(1, "Mutex")
 
-# Semaphores for the barrier
-mutex = MySemaphore(1, "Mutex") # Used to protect the barrier's shared state
-barrier = MySemaphore(0, "Barrier") # Used to block threads until they have all reached the barrier
+barrier = MySemaphore(0, "Barrier")
 
-# Shared state for the barrier
-last_thread_to_reach_barrier = False # Indicates whether the current thread is the last thread to reach the barrier
+aReachedBarrier = False
+bReachedBarrier = False
+cReachedBarrier = False
+dReachedBarrier = False
 
-def barrier_wait():
-    global last_thread_to_reach_barrier
 
-    mutex.wait()
+def threadA():
+    while True:
+        global aReachedBarrier
+        global bReachedBarrier
+        global cReachedBarrier
+        global dReachedBarrier
 
-    if last_thread_to_reach_barrier:
+        mutex.wait()
+        if bReachedBarrier & cReachedBarrier & dReachedBarrier:
+            aReachedBarrier = True
+            mutex.signal()
+            print("A is in the barrier")
+            barrier.signal()
+        else:
+            aReachedBarrier = True
+            mutex.signal()
+            print("A is in the barrier")
+            barrier.wait()
 
         barrier.signal()
 
-        last_thread_to_reach_barrier = False
-    else:
+        aReachedBarrier = False
+        bReachedBarrier = False
+        cReachedBarrier = False
+        dReachedBarrier = False
 
-        last_thread_to_reach_barrier = True
+        print("A got out of barrier")
+
+def threadB():
+    while True:
+        global aReachedBarrier
+        global bReachedBarrier
+        global cReachedBarrier
+        global dReachedBarrier
+
+        mutex.wait()
+        if aReachedBarrier & cReachedBarrier & dReachedBarrier:
+            bReachedBarrier = True
+            mutex.signal()
+            print("B is in the barrier")
+            barrier.signal()
+        else:
+            bReachedBarrier = True
+            mutex.signal()
+            print("B is in the barrier")
+            barrier.wait()
+
+        barrier.signal()
+
+        aReachedBarrier = False
+        bReachedBarrier = False
+        cReachedBarrier = False
+        dReachedBarrier = False
+
+        print("B got out of barrier")
 
 
-    mutex.signal()
+def threadC():
+    while True:
+        global aReachedBarrier
+        global bReachedBarrier
+        global cReachedBarrier
+        global dReachedBarrier
 
-    barrier.wait()
+        mutex.wait()
+        if bReachedBarrier & aReachedBarrier & dReachedBarrier:
+            cReachedBarrier = True
+            mutex.signal()
+            print("C is in the barrier")
+            barrier.signal()
+        else:
+            cReachedBarrier = True
+            mutex.signal()
+            print("C is in the barrier")
+            barrier.wait()
+
+        barrier.signal()
+
+        aReachedBarrier = False
+        bReachedBarrier = False
+        cReachedBarrier = False
+        dReachedBarrier = False
+
+        print("C got out of barrier")
+
+
+def threadD():
+    while True:
+        global aReachedBarrier
+        global bReachedBarrier
+        global cReachedBarrier
+        global dReachedBarrier
+
+        mutex.wait()
+        if bReachedBarrier & cReachedBarrier & aReachedBarrier:
+            dReachedBarrier = True
+            mutex.signal()
+            print("D is in the barrier")
+            barrier.signal()
+        else:
+            dReachedBarrier = True
+            mutex.signal()
+            print("D is in the barrier")
+            barrier.wait()
+
+        barrier.signal()
+
+        aReachedBarrier = False
+        bReachedBarrier = False
+        cReachedBarrier = False
+        dReachedBarrier = False
+
+        print("D got out of barrier")
 
 def setup():
-    for i in range(NUM_THREADS):
-        subscribe_thread(barrier_wait)
+    subscribe_thread(threadA)
+    subscribe_thread(threadB)
+    subscribe_thread(threadC)
+    subscribe_thread(threadD)
