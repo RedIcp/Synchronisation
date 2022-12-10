@@ -6,24 +6,24 @@ NUM_THREADS = 4
 mutex = MySemaphore(1, "Mutex")
 barrier = MySemaphore(0, "Barrier")
 
-last_thread_to_reach_barrier = False
+is_last_thread = False
 
 def threadReusableBarrier1():
     while True:
 
-        global last_thread_to_reach_barrier
+        global is_last_thread
 
         mutex.wait()
 
-        if last_thread_to_reach_barrier:
+        if is_last_thread:
 
             barrier.signal()
 
-            last_thread_to_reach_barrier = False
+            is_last_thread = False
 
         else:
 
-            last_thread_to_reach_barrier = True
+            is_last_thread = True
 
         mutex.signal()
 
