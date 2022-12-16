@@ -14,11 +14,10 @@ def put_forks(i):
     fork[right(i)].signal() 
     fork[left(i)].signal()
     footman.signal()
-    
-forks = [Semaphore(1) for i in range(5)]
-footman = MySemaphore(4, "footman")
 
 n = 5
+fork = [MySemaphore(1) for i in range(5)]
+footman = MySemaphore(4, "footman")
 
 def setup():
     for i in range(n):
