@@ -20,7 +20,8 @@ dut_dir = ""
 #myDut = "EReusableBarrier1Solution2"
 #myDut = "FReusableBarrier2"
 #myDut = "FReusableBarrier2"
-myDut = "GFollowersLeadersQueue"
+#myDut = "GFollowersLeadersQueue"
+myDut = "dininhphilosophersI"
 
 if __name__ == '__main__':
     sys.path.append(dut_dir)

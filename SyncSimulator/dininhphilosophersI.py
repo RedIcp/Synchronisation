@@ -15,11 +15,17 @@ def put_forks(i):
     fork[left(i)].signal()
     footman.signal()
 
+def phil0():
+    while True:
+        get_forks(0)
+        # eat
+        put_forks(0)
+        # think
 n = 5
 fork = [MySemaphore(1) for i in range(5)]
 footman = MySemaphore(4, "footman")
 
 def setup():
-    for i in range(n):
-        subscribe_thread(get_forks)
-        subscribe_thread(put_forks)
+    subscribe_thread(phil0)
+
+   
