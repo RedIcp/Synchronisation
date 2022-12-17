@@ -1,7 +1,7 @@
 from Environment import *
 from Environment import _blk
 
-def oxigenThread():
+def oxygenThread():
     while True:
         oPipet.wait()
         
@@ -12,8 +12,9 @@ def oxigenThread():
         oTurnstile.wait()
         
         oPipet.signal()
+        print("Got 1 Oxygen")
 
-def hydroThread():
+def hydrogenThread():
     while True:
         hPipet.wait()
         
@@ -24,6 +25,7 @@ def hydroThread():
         hTurnstile.wait()
         
         hPipet.signal()
+        print("Got 1 Hydrogen")
         
 hPipet = MySemaphore(2, "hPipet")
 oPipet = MySemaphore(1, "oPipet")
@@ -34,5 +36,5 @@ N = 5
 
 def setup():
     for i in range(N):
-        subscribe_thread(oxigenThread)
-        subscribe_thread(hydroThread)
+        subscribe_thread(oxygenThread)
+        subscribe_thread(hydrogenThread)

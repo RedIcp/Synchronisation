@@ -22,37 +22,37 @@ def put_forks(i, leftie):
 def phil0():
     while True:
         get_forks(0, True)
-        # eat
+        print("0 eating")
         put_forks(0, True)
-        # think
+        print("0 thinking")
         
 def phil1():
     while True:
         get_forks(1, False)
-        # eat
+        print("1 eating")
         put_forks(1, False)
-        # think
+        print("1 thinking")
 
 def phil2():
     while True:
         get_forks(2, False)
-        # eat
+        print("2 eating")
         put_forks(2, False)
-        # think
+        print("2 thinking")
 
 def phil3():
     while True:
         get_forks(3, False)
-        # eat
+        print("3 eating")
         put_forks(3, False)
-        # think
+        print("3 thinking")
 
 def phil4():
     while True:
         get_forks(4, False)
-        # eat
+        print("4 eating")
         put_forks(4, False)
-        # think
+        print("4 thinking")
 
 n = 5
 fork = [MySemaphore(1, "semaphore") for i in range(5)]
