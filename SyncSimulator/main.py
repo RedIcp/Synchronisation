@@ -14,6 +14,7 @@ dut_dir = ""
 # myDut = "Dut44_DiningPhilosophers_CondVar"
 # myDut = "Dut42_ReaderWriter_CondVar"
 # myDut = "Dut_Example"
+# myDut = "Dut_ConditionVariable"
 # myDut = "DDeadlock"
 # myDut = "CSynchronization"
 # myDut = "EReusableBarrier1Solution1"
@@ -23,7 +24,8 @@ dut_dir = ""
 # myDut = "HDiningPhilosophers1"
 # myDut = "ISantaClause"
 # myDut = "JH2O"
-myDut = "KRiverCrossing"
+# myDut = "KRiverCrossing"
+myDut = "NReadersAndWriters"
 
 
 
