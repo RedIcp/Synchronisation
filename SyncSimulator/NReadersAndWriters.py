@@ -5,10 +5,11 @@ def threadReader():
     while True:
         mutex.wait()
         while not writers_busy.v == 0:
-            readers_busy.v += 1
+            readers_wait.v += 1
             cv_reader.wait()
 
-        readers_busy.v+=1
+        readers_wait.v -= 1
+        readers_busy.v += 1
         mutex.signal()
         
         print("readers are reading")
@@ -17,7 +18,8 @@ def threadReader():
         readers_busy.v-=1
 
         if readers_busy.v == 0:
-            cv_writer.notify()
+            if writers_wait.v > 0:
+                cv_writer.notify()
         mutex.signal()
 
 
@@ -25,18 +27,21 @@ def threadWriter():
     while True:
         mutex.wait()
         while not (readers_busy.v == 0 and writers_busy.v == 0):
-            writers_busy.v += 1
+            writers_wait.v += 1
             cv_writer.wait()
 
+        writers_wait.v -= 1
         writers_busy.v+=1
         print("writer is writing")
         writers_busy.v-=1
 
         if writers_busy.v == 0:
-            if writer_prio.v:
+            if writers_wait.v > 0 and writer_prio.v:
                 cv_writer.notify()
-            else:
+            elif readers_wait.v > 0:
                 cv_reader.notify_all()
+            elif writers_wait.v > 0:
+                cv_writer.notify()
         mutex.signal()
 
 
