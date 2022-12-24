@@ -4,8 +4,8 @@ from Environment import _blk
 def threadReader():
     while True:
         mutex.wait()
+        readers_wait.v += 1
         while not writers_busy.v == 0:
-            readers_wait.v += 1
             cv_reader.wait()
 
         readers_wait.v -= 1
@@ -18,6 +18,7 @@ def threadReader():
         readers_busy.v-=1
 
         if readers_busy.v == 0:
+            print("All readers left")
             if writers_wait.v > 0:
                 cv_writer.notify()
         mutex.signal()
@@ -26,8 +27,8 @@ def threadReader():
 def threadWriter():
     while True:
         mutex.wait()
+        writers_wait.v += 1
         while not (readers_busy.v == 0 and writers_busy.v == 0):
-            writers_wait.v += 1
             cv_writer.wait()
 
         writers_wait.v -= 1
@@ -36,6 +37,7 @@ def threadWriter():
         writers_busy.v-=1
 
         if writers_busy.v == 0:
+            print("Writer left")
             if writers_wait.v > 0 and writer_prio.v:
                 cv_writer.notify()
             elif readers_wait.v > 0:
