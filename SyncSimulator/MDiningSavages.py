@@ -4,14 +4,13 @@ from Environment import _blk
 def vegetarian_savage_thread():
     while True:
         mutex.wait()
-        while vegetarian_food.v == 0:
+        while not bag.contains("vegetarian"):
             cv_vegetarian.wait()
 
-        vegetarian_food.v -= 1
-        total_food.v -= 1
+        bag.get("vegetarian")
         print("Vegetarian eating food")
 
-        if vegetarian_food.v == 0 and total_food.v < max_size.v:
+        if not bag.contains("vegetarian") and bag.size() < 5:
             cv_vegetarian_cook.notify()
         mutex.signal()
 
@@ -19,28 +18,28 @@ def vegetarian_savage_thread():
 def vegetarian_cook_thread():
     while True:
         mutex.wait()
-        while total_food.v == max_size.v or vegetarian_food.v > 0:
+        while bag.size() == 5 or bag.contains("vegetarian"):
             cv_vegetarian_cook.wait()
 
-        vegetarian_food.v = max_size.v - total_food.v
-        total_food.v = max_size.v
+        for i in range(5-bag.size()):
+            bag.put("vegetarian")
+
         print("Vegetarian food is cooked")
 
-        if vegetarian_food.v > 0:
+        if bag.contains("vegetarian"):
             cv_vegetarian.notify_all()
         mutex.signal()
 
 def carnivore_savage_thread():
     while True:
         mutex.wait()
-        while carnivore_food.v == 0:
+        while not bag.contains("carnivore"):
             cv_carnivore.wait()
 
-        carnivore_food.v -= 1
-        total_food.v -= 1
+        bag.get("carnivore")
         print("Carnivore eating food")
 
-        if carnivore_food.v == 0 and total_food.v < max_size.v:
+        if not bag.contains("carnivore") and bag.size() < 5:
             cv_carnivore_cook.notify()
         mutex.signal()
 
@@ -48,14 +47,15 @@ def carnivore_savage_thread():
 def carnivore_cook_thread():
     while True:
         mutex.wait()
-        while total_food.v == max_size.v or carnivore_food.v > 0:
+        while bag.size() == 5 or bag.contains("carnivore"):
             cv_carnivore_cook.wait()
 
-        carnivore_food.v = max_size.v - total_food.v
-        total_food.v = max_size.v
+        for i in range(5-bag.size()):
+            bag.put("carnivore")
+
         print("Carnivore food is cooked")
 
-        if carnivore_food.v > 0:
+        if bag.contains("carnivore"):
             cv_carnivore.notify_all()
         mutex.signal()
 
@@ -63,6 +63,7 @@ vegetarian_food = MyInt(0, "Vegetarian Food")
 carnivore_food = MyInt(0, "Carnivore Food")
 total_food = MyInt(0, "Total Food")
 max_size = MyInt(5, "Max Food")
+bag = MyBag("Bag")
 mutex = MyMutex("Mutex")
 cv_vegetarian = MyConditionVariable(mutex, "cv_vegetarian")
 cv_carnivore = MyConditionVariable(mutex, "cv_carnivore")

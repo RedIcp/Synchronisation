@@ -1,61 +1,76 @@
 from Environment import *
 from Environment import _blk
 
-def savageThread(diet_type):
+def vegetarian_savage_thread():
     while True:
-        mu.wait()
-        # while not enough food for all savages or 
-        # food not correspondant to savage diet, 
-        # savage wait
-        mu.signal()
-        # eating corresponding diet, remove 1 from bag 
-        # (more than 1 savage can be eating)
-        mu.wait()
-        # if pot empty after eating, notify cook, 
-        # else notify cook of corresponding diet
-        mu.signal()
+        mutex.wait()
+        while vegetarian_food.v == 0:
+            cv_vegetarian.wait()
+
+        vegetarian_food.v -= 1
+        total_food.v -= 1
+        print("Vegetarian eating food")
+
+        if vegetarian_food.v == 0 and total_food.v < max_size.v:
+            cv_vegetarian_cook.notify()
+        mutex.signal()
+
         
-def cookThread(diet_type):
+def vegetarian_cook_thread():
     while True:
-        # only one cook can be using the pot?
-        mu.wait()
-        # while pot not empty, wait
+        mutex.wait()
+        while total_food.v == max_size.v or vegetarian_food.v > 0:
+            cv_vegetarian_cook.wait()
+
+        vegetarian_food.v = max_size.v - total_food.v
+        total_food.v = max_size.v
+        print("Vegetarian food is cooked")
+
+        if vegetarian_food.v > 0:
+            cv_vegetarian.notify_all()
+        mutex.signal()
+
+def carnivore_savage_thread():
+    while True:
+        mutex.wait()
+        while carnivore_food.v == 0:
+            cv_carnivore.wait()
+
+        carnivore_food.v -= 1
+        total_food.v -= 1
+        print("Carnivore eating food")
+
+        if carnivore_food.v == 0 and total_food.v < max_size.v:
+            cv_carnivore_cook.notify()
+        mutex.signal()
+
         
-        # preparing food for corresponding diet, addd 1 to bag
-        
-        # notify all savages
-        mu.signal()
+def carnivore_cook_thread():
+    while True:
+        mutex.wait()
+        while total_food.v == max_size.v or carnivore_food.v > 0:
+            cv_carnivore_cook.wait()
 
-class Savage:
-    def __init__(self, diet_type):
-        self.diet_type = diet_type
+        carnivore_food.v = max_size.v - total_food.v
+        total_food.v = max_size.v
+        print("Carnivore food is cooked")
 
-class Cook:
-    def __init__(self, diet_type):
-        self.diet_type = diet_type
-        
-bag = MyBag("MyBag")
-#bagEmpty = MyBool(False, "bagEmpty")
-mu = MyMutex("mutex")
-pot = MyConditionVariable(mu, "pot")
+        if carnivore_food.v > 0:
+            cv_carnivore.notify_all()
+        mutex.signal()
 
-numVegetarianSavages = 2
-vegetarian = MyConditionVariable(mu, "vegetarian")
-vegetarianSavages = [Savage(vegetarian) for i in range(numVegetarianSavages)]
+vegetarian_food = MyInt(0, "Vegetarian Food")
+carnivore_food = MyInt(0, "Carnivore Food")
+total_food = MyInt(0, "Total Food")
+max_size = MyInt(5, "Max Food")
+mutex = MyMutex("Mutex")
+cv_vegetarian = MyConditionVariable(mutex, "cv_vegetarian")
+cv_carnivore = MyConditionVariable(mutex, "cv_carnivore")
+cv_vegetarian_cook = MyConditionVariable(mutex, "cv_vegetaria_cook")
+cv_carnivore_cook = MyConditionVariable(mutex, "cv_carnivore_cook")
 
-numCarnivoreSavages = 2
-carnivore = MyConditionVariable(mu, "carnivore")
-carnivoreSavages = [Savage(carnivore) for i in range(numCarnivoreSavages)]
-
-vegetarianCook = Cook(vegetarian)
-carnivoreCook = Cook(carnivore)
-    
 def setup():
-    subscribe_thread(lambda: cookThread(vegetarianCook))
-    subscribe_thread(lambda: cookThread(carnivoreCook))
-    
-    for i in range(numVegetarianSavages):
-        subscribe_thread(lambda: savageThread(vegetarianSavages))
-        
-    for i in range(numCarnivoreSavages):
-        subscribe_thread(lambda: savageThread(carnivoreSavages))
+    subscribe_thread(carnivore_cook_thread)
+    subscribe_thread(carnivore_savage_thread)
+    subscribe_thread(vegetarian_cook_thread)
+    subscribe_thread(vegetarian_savage_thread)   
