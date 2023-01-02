@@ -59,10 +59,6 @@ def carnivore_cook_thread():
             cv_carnivore.notify_all()
         mutex.signal()
 
-vegetarian_food = MyInt(0, "Vegetarian Food")
-carnivore_food = MyInt(0, "Carnivore Food")
-total_food = MyInt(0, "Total Food")
-max_size = MyInt(5, "Max Food")
 bag = MyBag("Bag")
 mutex = MyMutex("Mutex")
 cv_vegetarian = MyConditionVariable(mutex, "cv_vegetarian")
