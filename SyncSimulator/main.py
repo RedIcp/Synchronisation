@@ -27,8 +27,9 @@ dut_dir = ""
 # myDut = "KRiverCrossing"
 # myDut = "NReadersAndWriters"
 # myDut = "LDiningPhilosophers2"
-myDut = "MDiningSavages"
-
+#myDut = "MDiningSavages"
+#myDut = "Dut64_ModusHall_CondVar_Error"
+myDut = "QModusHall"
 
 
 
