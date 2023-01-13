@@ -20,9 +20,9 @@ def threadPerson(me, other):
             if state.v == me.state_trans1:
                 # the last heathens left the path
                 state.v = me.state_trans2
+                other.cv.notify_all()
             else:
                 state.v = "NEUTRAL"
-            other.cv.notify_all()
         mutex.signal()
 
 
