@@ -8,14 +8,28 @@ def threadBaboon(me, other):
         mutex.wait()
         capacity.wait()
 
-        if state.v != "EMPTY" or state.v == other.state.v:
+        if state.v != "EMPTY" or state.v == other.state:
+            mutex.signal()
             me.sem.wait()
 
-        state.v = me.state.v 
+        state.v = me.state
         me.count.v += 1
 
         mutex.signal()
 
+        #cs
+
+        mutex.wait()
+
+        me.count.v -= 1
+
+        if me.count.v == 0:
+            if me.candidates.v > other.candidates.v:
+                me.sem.signal()
+            else:
+                other.sem.signal()
+        
+        mutex.signal()
 
 
 
@@ -26,15 +40,12 @@ class Baboon(object):
         self.sem = sem
         self.state = state
 
-state = MyString("EMPTY", "state") # other states: “NORTH”, “SOUTH”
+state = MyString("EMPTY", "state")
 mutex = MyMutex("mutex")
 capacity = MySemaphore(5, "capacity")
 
-
 northCount = MyInt(0, "nCount")
 northCandidates = MyInt(0, "nCand")
-# northSem acts like a ‘queue’, where either you open it for yourself, 
-# or it is opened by the south baboon (when he leaves)
 northSem = MySemaphore(0, "nSem")
 
 southCount = MyInt(0, "sCount")
