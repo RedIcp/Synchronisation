@@ -27,7 +27,8 @@ dut_dir = ""
 # myDut = "KRiverCrossing"
 # myDut = "NReadersAndWriters"
 # myDut = "LDiningPhilosophers2"
-myDut = "MDiningSavages"
+# myDut = "MDiningSavages"
+myDut = "TeacherStudent"
 
 
 
