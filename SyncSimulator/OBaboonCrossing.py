@@ -6,30 +6,39 @@ N = 4
 def threadBaboon(me, other):
     while True:
         mutex.wait()
-        capacity.wait()
 
-        if state.v != "EMPTY" or state.v == other.state:
+        if state.v == other.state or (state.v != "EMPTY" and other.candidates.v > 0):
+            me.candidates.v += 1
             mutex.signal()
             me.sem.wait()
+            me.count.v += 1
+            if me.count.v == 1:
+                state.v = me.state
+        else:
+            me.count.v += 1
+            if me.count.v == 1:
+                state.v = me.state
+            mutex.signal()
+            capacity.wait()
 
-        state.v = me.state
-        me.count.v += 1
-
-        mutex.signal()
-
-        #cs
+        print(state.v + " is crossing")
 
         mutex.wait()
 
         me.count.v -= 1
 
         if me.count.v == 0:
-            if me.candidates.v > other.candidates.v:
-                me.sem.signal()
-            else:
+            state.v = "EMPTY"
+            if other.candidates.v > 0:
                 other.sem.signal()
+                other.candidates.v -= 1
+            elif me.candidates.v > 0:
+                other.sem.signal()
+                other.candidates.v -= 0
         
         mutex.signal()
+
+        capacity.signal()
 
 
 
