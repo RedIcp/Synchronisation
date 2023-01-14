@@ -2,12 +2,12 @@ from Environment import *
 from Environment import _blk
 
 
-N = 4
+N = 6
 def threadBaboon(me, other):
     while True:
         mutex.wait()
 
-        if state.v == other.state or (state.v != "EMPTY" and other.candidates.v > 0):
+        if state.v == other.state or (state.v == "EMPTY" and other.candidates.v > 0):
             me.candidates.v += 1
             mutex.signal()
             me.sem.wait()
@@ -22,7 +22,8 @@ def threadBaboon(me, other):
             if me.count.v == 1:
                 state.v = me.state
             mutex.signal()
-            capacity.wait()
+
+        capacity.wait()
 
         print(state.v + " is crossing")
 
@@ -31,13 +32,14 @@ def threadBaboon(me, other):
         me.count.v -= 1
 
         if me.count.v == 0:
+            print("all " + state.v + " has left")
             state.v = "EMPTY"
             if other.candidates.v > 0:
                 other.sem.signal()
                 other.candidates.v -= 1
             elif me.candidates.v > 0:
-                other.sem.signal()
-                other.candidates.v -= 0
+                me.sem.signal()
+                me.candidates.v -= 0
         
         mutex.signal()
 
