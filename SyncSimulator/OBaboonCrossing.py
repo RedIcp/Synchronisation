@@ -11,9 +11,12 @@ def threadBaboon(me, other):
             me.candidates.v += 1
             mutex.signal()
             me.sem.wait()
+
+            mutex.wait()
             me.count.v += 1
             if me.count.v == 1:
                 state.v = me.state
+            mutex.signal()
         else:
             me.count.v += 1
             if me.count.v == 1:
