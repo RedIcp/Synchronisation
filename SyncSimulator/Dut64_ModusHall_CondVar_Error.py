@@ -20,14 +20,12 @@ def threadPerson(me, other):
         me.count.v -= 1
         
         if me.count.v == 0:
-            state.v = "NEUTRAL"
+            if state.v == me.state_trans:
+                 state.v = other.state_walk
+            else:
+                 state.v = "NEUTRAL"
             other.cv.notify_all()
         mutex.signal()
-
-#             if state.v == me.state_trans:
-#                 state.v = other.state_walk
-#             else:
-#                 state.v = "NEUTRAL"
 
 
 class Person(object):
