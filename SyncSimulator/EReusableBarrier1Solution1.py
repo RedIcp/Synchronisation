@@ -1,129 +1,45 @@
 from Environment import *
 from Environment import _blk
 
-mutex = MySemaphore(1, "Mutex")
-
 barrier = MySemaphore(0, "Barrier")
 
-aReachedBarrier = False
-bReachedBarrier = False
-cReachedBarrier = False
-dReachedBarrier = False
+aReached = MySemaphore(0, "Barrier")
+bReached = MySemaphore(0, "Barrier")
+cReached = MySemaphore(0, "Barrier")
+dReached = MySemaphore(0, "Barrier")
 
 
 def threadA():
     while True:
-        global aReachedBarrier
-        global bReachedBarrier
-        global cReachedBarrier
-        global dReachedBarrier
-
-        mutex.wait()
-        if bReachedBarrier & cReachedBarrier & dReachedBarrier:
-            aReachedBarrier = True
-            mutex.signal()
-            print("A is in the barrier")
-            barrier.signal()
-        else:
-            aReachedBarrier = True
-            mutex.signal()
-            print("A is in the barrier")
-            barrier.wait()
-
-        barrier.signal()
-
-        aReachedBarrier = False
-        bReachedBarrier = False
-        cReachedBarrier = False
-        dReachedBarrier = False
-
-        print("A got out of barrier")
+        aReached.signal(3)
+        bReached.wait()
+        cReached.wait()
+        dReached.wait()
 
 def threadB():
     while True:
-        global aReachedBarrier
-        global bReachedBarrier
-        global cReachedBarrier
-        global dReachedBarrier
-
-        mutex.wait()
-        if aReachedBarrier & cReachedBarrier & dReachedBarrier:
-            bReachedBarrier = True
-            mutex.signal()
-            print("B is in the barrier")
-            barrier.signal()
-        else:
-            bReachedBarrier = True
-            mutex.signal()
-            print("B is in the barrier")
-            barrier.wait()
-
-        barrier.signal()
-
-        aReachedBarrier = False
-        bReachedBarrier = False
-        cReachedBarrier = False
-        dReachedBarrier = False
-
-        print("B got out of barrier")
-
+        bReached.signal(3)
+        aReached.wait()
+        cReached.wait()
+        dReached.wait()
 
 def threadC():
     while True:
-        global aReachedBarrier
-        global bReachedBarrier
-        global cReachedBarrier
-        global dReachedBarrier
-
-        mutex.wait()
-        if bReachedBarrier & aReachedBarrier & dReachedBarrier:
-            cReachedBarrier = True
-            mutex.signal()
-            print("C is in the barrier")
-            barrier.signal()
-        else:
-            cReachedBarrier = True
-            mutex.signal()
-            print("C is in the barrier")
-            barrier.wait()
-
-        barrier.signal()
-
-        aReachedBarrier = False
-        bReachedBarrier = False
-        cReachedBarrier = False
-        dReachedBarrier = False
-
-        print("C got out of barrier")
-
+        cReached.signal(3)
+        bReached.wait()
+        aReached.wait()
+        dReached.wait()
 
 def threadD():
     while True:
-        global aReachedBarrier
-        global bReachedBarrier
-        global cReachedBarrier
-        global dReachedBarrier
+        bReached.wait()
+        cReached.wait()
+        aReached.wait()
+        dReached.signal(3)       
+        
 
-        mutex.wait()
-        if bReachedBarrier & cReachedBarrier & aReachedBarrier:
-            dReachedBarrier = True
-            mutex.signal()
-            print("D is in the barrier")
-            barrier.signal()
-        else:
-            dReachedBarrier = True
-            mutex.signal()
-            print("D is in the barrier")
-            barrier.wait()
 
-        barrier.signal()
 
-        aReachedBarrier = False
-        bReachedBarrier = False
-        cReachedBarrier = False
-        dReachedBarrier = False
-
-        print("D got out of barrier")
 
 def setup():
     subscribe_thread(threadA)

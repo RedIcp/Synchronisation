@@ -25,13 +25,13 @@ dut_dir = ""
 # myDut = "ISantaClause"
 # myDut = "JH2O"
 # myDut = "KRiverCrossing"
-# myDut = "NReadersAndWriters"
+myDut = "NReadersAndWriters"
 # myDut = "LDiningPhilosophers2"
 # myDut = "MDiningSavages"
 # myDut = "Dut64_ModusHall_CondVar_Error"
 # myDut = "QModusHall"
-myDut = "OBaboonCrossing"
-
+# myDut = "OBaboonCrossing"
+# myDut = "TeacherStudent"
 
 
 if __name__ == '__main__':

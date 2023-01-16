@@ -5,11 +5,11 @@ def oxygenThread():
     while True:
         oPipet.wait()
         
-        hTurnstile.signal()
-        hTurnstile.signal()
-        
         oTurnstile.wait()
         oTurnstile.wait()
+
+        hTurnstile.signal()
+        hTurnstile.signal()
         
         oPipet.signal()
         print("Got 1 Oxygen")

@@ -1,60 +1,30 @@
 from Environment import *
 from Environment import _blk
 
-mutex = MySemaphore(1, "Mutex")
+lPipette = MySemaphore(1, "Leader")
+fPipette = MySemaphore(1, "Follower")
 
-leaderQueue = MySemaphore(0, "Leader")
-followerQueue = MySemaphore(0, "Follower")
-
-isThereFollower = False
-isThereLeader = False
+leader = MySemaphore(0, "LeaderSem")
+follower = MySemaphore(0, "FollowerSem")
 
 def threadLeader():
     while True:
+        lPipette.wait()
 
-        global isThereFollower
-        global isThereLeader
+        leader.signal()
+        follower.wait()
 
-        mutex.wait()
-
-        if isThereFollower:
-
-            isThereFollower = False
-            
-            followerQueue.signal()
-
-        else:
-
-            isThereLeader = True
-
-            mutex.signal()
-
-        leaderQueue.wait()
-
-        mutex.signal()
+        lPipette.signal()
 
 
 def threadFollower():
     while True:
-        
-        global isThereFollower
-        global isThereLeader
-        
-        mutex.wait()
+        fPipette.wait()
 
-        if isThereLeader:
+        follower.signal()
+        leader.wait()
 
-            isThereLeader = False
-            
-            leaderQueue.signal()
-
-        else:
-
-            isThereFollower = True
-
-            mutex.signal()
-
-        followerQueue.wait()
+        fPipette.signal()
 
 def setup():
     subscribe_thread(threadLeader)

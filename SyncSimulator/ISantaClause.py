@@ -20,6 +20,7 @@ def santaThread():
             print("help elves")
             ## helping all the waiting elves
             elfTex.signal(elves)
+            elves -= 3
         elif reindeer >= 9:
             print("prepare sleigh")
             reindeerSem.signal(9)
@@ -59,14 +60,6 @@ def elvesThread():
         print("get help")
         ## using elfTex here to wait for santa to help them
         elfTex.wait()
-
-        mutex.wait()
-
-        elves -= 1
-        if elves == 0:
-            elfTex.signal()
-
-        mutex.signal()
 
 def setup():
     subscribe_thread(santaThread)
